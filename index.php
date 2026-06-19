@@ -49,11 +49,12 @@ if ($result && $result->num_rows > 0) {
         <div class="sidebar">
             <div>
                 <button>Spaces</button>
-                <ul>
-                    <li>Space A</li>
-                    <li>Space B</li>
-                    <li>Space C</li>
-                </ul>
+                <button>Add New Space</button>
+                <div class="space">
+                    <button>Space A</button>
+                    <button>Space B</button>
+                    <button>Space C</button>
+                </div>
             </div>
         </div>
 
