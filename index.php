@@ -19,6 +19,15 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
+$spaces = [];
+$space_sql = "SELECT * FROM spaces ORDER BY space_id ASC";
+$space_result = $conn->query($space_sql);
+if ($space_result && $space_result->num_rows > 0) {
+    while ($space = $space_result->fetch_assoc()) {
+        $spaces[] = $space;
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -47,15 +56,27 @@ if ($result && $result->num_rows > 0) {
     <div class="content">
 
         <div class="sidebar">
-            <div>
-                <button>Spaces</button>
-                <button>Add New Space</button>
-                <div class="space">
-                    <button>Space A</button>
-                    <button>Space B</button>
-                    <button>Space C</button>
+            <form action="actions.php" method="post">
+                <div>
+                    <div class="siderbar-header">
+                        <div class="siderbar-header-buttons">
+                            <button name="action">Spaces</button>
+                            <button name="action" value="add_space">Add New Space</button>
+                        </div>
+                        <div class="siderbar-header-input">
+                            <input type="text" name="space_name" placeholder="New Space Name" required>
+                        </div>
+                    </div>
+
+                    <div class="space">
+                        <?php foreach ($spaces as $space): ?>
+                            <button type="button">
+                                <?php echo htmlspecialchars($space['space_name']); ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
 
         <div class="main">

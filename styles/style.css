@@ -122,3 +122,19 @@ button:hover {
     background-color: var(--button-focus);
 }
 
+
+.siderbar-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.siderbar-header-input {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+input {
+    padding: 5px;
+}
