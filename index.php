@@ -2,19 +2,19 @@
 
 <html>
 <head>
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Maverick</title>
+    <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
 
 <div class="navbar">
-    <h1>My Dashboard</h1>
-
+    <h1>Maverick</h1>
     <div>
         <form action="actions.php" method="post">
-            <button name="action" value="home">Home</button>
-            <button name="action" value="save">Save</button>
+            <button name="action" value="notifications">Notifications</button>
+            <button name="action" value="help">Help</button>
             <button name="action" value="settings">Settings</button>
+            <button name="action" value="profile">Profile</button>
         </form>
     </div>
 </div>
@@ -22,25 +22,14 @@
 <div class="content">
 
     <div class="sidebar">
-
         <div>
-            <button>Projects</button>
+            <button>Spaces</button>
             <ul>
-                <li>Project A</li>
-                <li>Project B</li>
-                <li>Project C</li>
+                <li>Space A</li>
+                <li>Space B</li>
+                <li>Space C</li>
             </ul>
         </div>
-
-        <div>
-            <button>Tasks</button>
-            <ul>
-                <li>Task 1</li>
-                <li>Task 2</li>
-                <li>Task 3</li>
-            </ul>
-        </div>
-
     </div>
 
     <div class="main">

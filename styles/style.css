@@ -1,0 +1,43 @@
+* {
+    padding: 0 5px
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    border: 1px solid #000000;
+    padding: 20px;
+}
+
+.main {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    border: 1px solid #000000;
+    margin: 0 10px;
+}
+
+.column {
+    border: 1px solid #000000;
+    margin: 10px 5px;
+    flex: 1;
+    flex-direction: column;
+    padding: 0px 15px;
+}
