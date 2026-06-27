@@ -1,0 +1,1 @@
+sqlplus system@localhost:1521/XE
