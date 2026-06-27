@@ -10,13 +10,18 @@ function db_error($resource)
 
 function add_space($conn)
 {
+    if (!isset($_SESSION["logged_in"])) {
+        header("Location: login.php");
+        exit();
+    }
+
     $space_name = trim($_POST["space_name"]);
 
     if (empty($space_name)) {
         return;
     }
 
-    $user_id = 1;
+    $user_id = $_SESSION["user_id"];
     $space_id = time();
 
     $sql = "INSERT INTO spaces (space_id, user_id, space_name)
@@ -94,13 +99,12 @@ function login($conn)
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    login($conn);
-}
-
 if (isset($_POST["action"])) {
 
     switch ($_POST["action"]) {
+        case "login":
+            login($conn);
+            break;
 
         case "add_space":
             add_space($conn);

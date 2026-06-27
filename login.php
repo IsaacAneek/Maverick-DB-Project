@@ -43,8 +43,11 @@
                 <a href="#">Forgot Password?</a>
             </div>
 
-            <button type="submit">
+            <button type="submit" name="action" value="login">
                 Login
+            </button>
+            <button type="submit" name="action" value="register">
+                Register
             </button>
 
         </form>
