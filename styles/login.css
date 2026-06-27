@@ -1,0 +1,148 @@
+:root {
+  --bg: #000000;
+  --surface: #0e0e0e;
+  --surface-card: #161616;
+  --border: #2c2c2c;
+  --border-focus: #6b6b6b;
+
+  --button-focus: #333333;
+
+  --text: #ffffff;
+  --text-muted: #888888;
+  --text-dimmed: #444444;
+
+  --accent-bg: #ffffff;
+  --accent-text: #000000;
+
+  --active-block-bg: #1c1c1c;
+  --active-block-border: #ffffff;
+
+  --success: #ffffff;
+  --shadow: rgba(255, 255, 255, 0.05);
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+
+    background: var(--surface-card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 5px;
+
+    padding: 32px;
+}
+
+h1 {
+    margin-bottom: 32px;
+    text-align: center;
+    font-weight: 600;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+label {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+input[type="text"],
+input[type="password"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+
+    padding: 12px;
+    outline: none;
+
+    border-radius: 5px;
+
+    transition: var(--transition);
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: var(--border-focus);
+    border-radius: 5px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.remember:hover {
+    cursor: pointer;
+}
+
+a {
+    color: var(--text-muted);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--text);
+}
+
+button {
+    background: var(--accent-bg);
+    color: var(--accent-text);
+
+    border: none;
+
+    padding: 12px;
+
+    cursor: pointer;
+
+    transition: var(--transition);
+
+    border-radius: 5px;
+}
+
+button:hover {
+    background: var(--button-focus);
+    color: var(--text);
+}
+
+.error {
+    color: var(--text);
+    font-size: 14px;
+}
