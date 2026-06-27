@@ -1,0 +1,1 @@
+insert into spaces values (1, 2207095, 'my_space_name_1', TO_TIMESTAMP( '02-02-2026 15:30:45.123', 'DD-MM-YYYY HH24:MI:SS.FF3' ));

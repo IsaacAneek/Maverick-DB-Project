@@ -1,0 +1,1 @@
+insert into users values (2207095, 'isaac', '$2y$10$WYks6yHR.7vneujDCkjgM.5u2L9WkrPLdhcC65zJ1e2bylTH5jGLG', TO_TIMESTAMP( '02-02-2026 15:30:45.123', 'DD-MM-YYYY HH24:MI:SS.FF3' ));
