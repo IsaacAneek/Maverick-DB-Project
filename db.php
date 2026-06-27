@@ -1,5 +1,4 @@
 <?php
-
 $username = "system";
 $password = "1234";
 $connection_string = "localhost:1521/XE";

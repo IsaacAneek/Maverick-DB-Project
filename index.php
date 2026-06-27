@@ -2,30 +2,29 @@
 require_once 'db.php';
 
 $sql = "SELECT * FROM kanban_tasks ORDER BY position ASC";
-$result = $conn->query($sql);
+$statement = oci_parse($conn, $sql);
+oci_execute($statement);
 
 $todo_tasks = [];
 $ongoing_tasks = [];
 $done_tasks = [];
 
-if ($result && $result->num_rows > 0) {
-    while ($task = $result->fetch_assoc()) {
-        if ($task['column_name'] === 'todo')
-            $todo_tasks[] = $task;
-        if ($task['column_name'] === 'ongoing')
-            $ongoing_tasks[] = $task;
-        if ($task['column_name'] === 'done')
-            $done_tasks[] = $task;
-    }
+while (($task = oci_fetch_assoc($statement)) != false) {
+    if (strtolower($task['COLUMN_NAME']) === 'todo')
+        $todo_tasks[] = $task;
+    if (strtolower($task['COLUMN_NAME']) === 'ongoing')
+        $ongoing_tasks[] = $task;
+    if (strtolower($task['COLUMN_NAME']) === 'done')
+        $done_tasks[] = $task;
 }
 
 $spaces = [];
 $space_sql = "SELECT * FROM spaces ORDER BY space_id ASC";
-$space_result = $conn->query($space_sql);
-if ($space_result && $space_result->num_rows > 0) {
-    while ($space = $space_result->fetch_assoc()) {
-        $spaces[] = $space;
-    }
+$space_statement = oci_parse($conn, $space_sql);
+oci_execute($space_statement);
+
+while (($space = oci_fetch_assoc($space_statement)) != false) {
+    $spaces[] = $space;
 }
 
 ?>
