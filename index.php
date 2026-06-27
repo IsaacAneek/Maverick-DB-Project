@@ -70,7 +70,7 @@ while (($space = oci_fetch_assoc($space_statement)) != false) {
                     <div class="space">
                         <?php foreach ($spaces as $space): ?>
                             <button type="button">
-                                <?php echo htmlspecialchars($space['space_name']); ?>
+                                <?php echo htmlspecialchars($space['SPACE_NAME']); ?>
                             </button>
                         <?php endforeach; ?>
                     </div>
@@ -92,7 +92,7 @@ while (($space = oci_fetch_assoc($space_statement)) != false) {
                 <div class="rows">
                     <?php foreach ($todo_tasks as $task): ?>
                         <div class="task-card">
-                            <?php echo htmlspecialchars($task['task_name']); ?>
+                            <?php echo htmlspecialchars($task['TASK_NAME']); ?>
                         </div>
                     <?php endforeach; ?>
                 </div>

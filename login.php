@@ -12,13 +12,19 @@
 
         <h1>Maverick</h1>
 
-        <form method="POST" action="login.php">
+        <form method="POST" action="actions.php">
 
             <label for="username">Username</label>
             <input
                 type="text"
                 id="username"
                 name="username">
+
+            <label for="userid">ID/Roll</label>
+            <input 
+                type="text"
+                id="userid"
+                name="userid">
 
             <label for="password">Password</label>
             <input
