@@ -102,6 +102,10 @@ function login($conn)
 if (isset($_POST["action"])) {
 
     switch ($_POST["action"]) {
+        case "register":
+            header("Location: registration.php");
+            exit();
+            break;
         case "login":
             login($conn);
             break;
