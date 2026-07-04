@@ -71,6 +71,7 @@ body {
 .search-input {
     flex: 1;
     min-width: 220px;
+    min-height: 30px;
 }
 
 .dropdown {
