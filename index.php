@@ -42,6 +42,36 @@ while (($space = oci_fetch_assoc($space_statement)) != false) {
 
     <div class="navbar">
         <h1>Maverick</h1>
+
+        <div class="nav-controls">
+            <div class="search-group">
+                <input type="text" class="search-input" placeholder="Search tasks">
+
+                <details class="dropdown">
+                    <summary class="nav-action">Filter</summary>
+                    <div class="dropdown-panel">
+                        <label for="time-range">Time Range</label>
+                        <input type="datetime-local" id="time-range" name="time_range">
+
+                        <label for="task-name">Task Name</label>
+                        <input type="text" id="task-name" name="task_name" placeholder="Task Name">
+
+                        <label for="task-type">Task Type</label>
+                        <input type="text" id="task-type" name="task_type" placeholder="Task Type">
+                    </div>
+                </details>
+
+                <details class="dropdown">
+                    <summary class="nav-action">Sort</summary>
+                    <div class="dropdown-panel">
+                        <label class="checkbox-row"><input type="checkbox" name="sort_time" checked> Time</label>
+                        <label class="checkbox-row"><input type="checkbox" name="sort_name"> Name</label>
+                        <label class="checkbox-row"><input type="checkbox" name="sort_type"> Type</label>
+                    </div>
+                </details>
+            </div>
+        </div>
+
         <div>
             <form action="actions.php" method="post">
                 <button name="action" value="notifications">Notifications</button>

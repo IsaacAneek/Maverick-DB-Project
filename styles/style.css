@@ -43,15 +43,90 @@ body {
 }
 
 .navbar {
-    height: 60px;
+    min-height: 60px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--border);
     background-color: var(--surface);
     color: var(--text);
-    padding: 0px 15px;
+    padding: 10px 15px;
     transition: var(--transition);
+    gap: 12px;
+}
+
+.nav-controls {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.search-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: min(560px, 100%);
+}
+
+.search-input {
+    flex: 1;
+    min-width: 220px;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.dropdown > summary::-webkit-details-marker {
+    display: none;
+}
+
+.nav-action {
+    display: inline-block;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    transition: var(--transition);
+}
+
+.nav-action:hover,
+.dropdown > summary:hover {
+    background-color: var(--button-focus);
+    border: 1px solid var(--active-block-border);
+    border-radius: 5px;
+    transform: translateY(-1px);
+}
+
+.dropdown-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 240px;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--surface-card);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    z-index: 20;
+}
+
+.dropdown[open] .dropdown-panel {
+    display: flex;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .content {
@@ -119,8 +194,9 @@ button {
 }
 
 button:hover {
-    border-color: var(--border-focus);
+    border: 1px solid var(--active-block-border);
     background-color: var(--button-focus);
+    color: var(--text);
     border-radius: 5px;
 }
 
