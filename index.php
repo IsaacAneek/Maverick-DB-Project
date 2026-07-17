@@ -1,31 +1,78 @@
 <?php
 require_once 'db.php';
+session_start();
 
-$sql = "SELECT * FROM kanban_tasks ORDER BY position ASC";
+if (!isset($_SESSION["logged_in"])) {
+    header("Location: login.php");
+    exit();
+}
+
+$user_id = $_SESSION["user_id"];
+
+$sql = "
+SELECT kt.* FROM kanban_tasks kt
+JOIN kanban_boards kb
+    ON kt.kanban_board_id = kb.kanban_board_id
+JOIN spaces s
+    ON kb.space_id = s.space_id
+WHERE s.user_id = :user_id
+ORDER BY kt.position ASC
+";
+
 $statement = oci_parse($conn, $sql);
+oci_bind_by_name($statement, ":user_id", $user_id);
 oci_execute($statement);
 
 $todo_tasks = [];
 $ongoing_tasks = [];
 $done_tasks = [];
-
-while (($task = oci_fetch_assoc($statement)) != false) {
-    if (strtolower($task['COLUMN_NAME']) === 'todo')
-        $todo_tasks[] = $task;
-    if (strtolower($task['COLUMN_NAME']) === 'ongoing')
-        $ongoing_tasks[] = $task;
-    if (strtolower($task['COLUMN_NAME']) === 'done')
-        $done_tasks[] = $task;
-}
-
 $spaces = [];
-$space_sql = "SELECT * FROM spaces ORDER BY space_id ASC";
-$space_statement = oci_parse($conn, $space_sql);
-oci_execute($space_statement);
 
-while (($space = oci_fetch_assoc($space_statement)) != false) {
-    $spaces[] = $space;
+$selected_space_id = null;
+
+if (isset($_GET["space_id"])) {
+    $selected_space_id = $_GET["space_id"];
+} elseif (count($spaces) > 0) {
+    $selected_space_id = $spaces[0]["SPACE_ID"];
 }
+
+if ($selected_space_id != null) {
+
+    $sql = "
+    SELECT kt.*
+    FROM kanban_tasks kt
+    JOIN kanban_boards kb
+        ON kt.kanban_board_id = kb.kanban_board_id
+    WHERE kb.space_id = :space_id
+    ORDER BY kt.position";
+
+    $stmt = oci_parse($conn, $sql);
+
+    oci_bind_by_name($stmt, ":space_id", $selected_space_id);
+
+    oci_execute($stmt);
+
+    while ($task = oci_fetch_assoc($stmt)) {
+
+        switch (strtolower($task["COLUMN_NAME"])) {
+
+            case "todo":
+                $todo_tasks[] = $task;
+                break;
+
+            case "ongoing":
+                $ongoing_tasks[] = $task;
+                break;
+
+            case "done":
+                $done_tasks[] = $task;
+                break;
+        }
+    }
+
+    oci_free_statement($stmt);
+}
+?>
 
 ?>
 
@@ -99,9 +146,12 @@ while (($space = oci_fetch_assoc($space_statement)) != false) {
 
                     <div class="space">
                         <?php foreach ($spaces as $space): ?>
-                            <button type="button">
-                                <?php echo htmlspecialchars($space['SPACE_NAME']); ?>
-                            </button>
+                            <form method="get">
+                                <input type="hidden" name="space_id" value="<?php echo $space["SPACE_ID"]; ?>">
+                                <button type="submit">
+                                    <?php echo htmlspecialchars($space["SPACE_NAME"]); ?>
+                                </button>
+                            </form>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -114,9 +164,12 @@ while (($space = oci_fetch_assoc($space_statement)) != false) {
                 <h2>Todo</h2>
 
                 <form action="actions.php" method="post">
+                    <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+                    <input type="text" name="task_name" placeholder="Task name" required>
                     <button name="action" value="add_todo">
                         Add Row
                     </button>
+
                 </form>
 
                 <div class="rows">
