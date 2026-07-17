@@ -226,7 +226,18 @@ $done_tasks = $tasks["done"];
                 <div class="rows">
                     <?php foreach ($todo_tasks as $task): ?>
                         <div class="task-card">
-                            <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
+                            <p>
+                                Task name : 
+                                <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
+                            </p>
+                            <p>
+                                Deadline :
+                                <?php echo htmlspecialchars($task["DEADLINE"]); ?>
+                            </p>
+                            <p>
+                                Created at :
+                                <?php echo htmlspecialchars($task["CREATED_AT"]); ?>
+                            </p>
                         </div>
                     <?php endforeach; ?>
                 </div>
