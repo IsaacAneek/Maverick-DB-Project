@@ -60,13 +60,30 @@ function load_kanban_tasks($conn, $space_id)
         ];
     }
 
+    $order_by = "kt.position";
+
+    if (isset($_GET["sort"])) {
+        switch ($_GET["sort"]) {
+            case "task_name":
+                $order_by = "kt.task_name";
+                break;
+
+            case "created_at":
+                $order_by = "kt.created_at";
+                break;
+
+            default:
+                $order_by = "kt.position";
+        }
+    }
+
     $sql = "
     SELECT kt.*
     FROM kanban_tasks kt
     JOIN kanban_boards kb
         ON kt.kanban_board_id = kb.kanban_board_id
     WHERE kb.space_id = :space_id
-    ORDER BY kt.position";
+    ORDER BY $order_by";
 
     $stmt = oci_parse($conn, $sql);
 
@@ -127,32 +144,102 @@ $done_tasks = $tasks["done"];
         <h1>Maverick</h1>
 
         <div class="nav-controls">
-            <div class="search-group">
-                <input type="text" class="search-input" placeholder="Search tasks">
+            <form action="index.php" method="get">
 
-                <details class="dropdown">
-                    <summary class="nav-action">Filter</summary>
-                    <div class="dropdown-panel">
-                        <label for="time-range">Time Range</label>
-                        <input type="datetime-local" id="time-range" name="time_range">
+                <?php if ($selected_space_id != null): ?>
+                    <input
+                        type="hidden"
+                        name="space_id"
+                        value="<?php echo $selected_space_id; ?>">
+                <?php endif; ?>
 
-                        <label for="task-name">Task Name</label>
-                        <input type="text" id="task-name" name="task_name" placeholder="Task Name">
+                <div class="search-group">
 
-                        <label for="task-type">Task Type</label>
-                        <input type="text" id="task-type" name="task_type" placeholder="Task Type">
-                    </div>
-                </details>
+                    <input
+                        type="text"
+                        class="search-input"
+                        name="search"
+                        placeholder="Search tasks">
 
-                <details class="dropdown">
-                    <summary class="nav-action">Sort</summary>
-                    <div class="dropdown-panel">
-                        <label class="checkbox-row"><input type="checkbox" name="sort_time" checked> Time</label>
-                        <label class="checkbox-row"><input type="checkbox" name="sort_name"> Name</label>
-                        <label class="checkbox-row"><input type="checkbox" name="sort_type"> Type</label>
-                    </div>
-                </details>
-            </div>
+                    <button
+                        type="submit"
+                        name="action"
+                        value="search">
+                        Apply Search
+                    </button>
+
+                    <details class="dropdown">
+                        <summary class="nav-action">Filter</summary>
+
+                        <div class="dropdown-panel">
+
+                            <label for="time-range">Time Range</label>
+                            <input
+                                type="datetime-local"
+                                id="time-range"
+                                name="time_range">
+
+                            <label for="task-name">Task Name</label>
+                            <input
+                                type="text"
+                                id="task-name"
+                                name="task_name"
+                                placeholder="Task Name">
+
+                            <label for="task-type">Task Type</label>
+                            <select
+                                id="task-type"
+                                name="task_type">
+
+                                <option value="">All</option>
+                                <option value="todo">Todo</option>
+                                <option value="ongoing">In Progress</option>
+                                <option value="done">Done</option>
+
+                            </select>
+
+                            <button
+                                type="submit"
+                                name="action"
+                                value="filter">
+                                Apply Filter
+                            </button>
+
+                        </div>
+                    </details>
+
+                        <details class="dropdown">
+                            <summary class="nav-action">Sort</summary>
+
+                            <div class="dropdown-panel">
+
+                                <label class="checkbox-row">
+                                    <input
+                                        type="radio"
+                                        name="sort"
+                                        value="created_at"
+                                        checked>
+                                    Time
+                                </label>
+
+                                <label class="checkbox-row">
+                                    <input
+                                        type="radio"
+                                        name="sort"
+                                        value="task_name">
+                                    Name
+                                </label>
+
+                                <button type="submit">
+                                    Apply Sort
+                                </button>
+
+                            </div>
+                        </details>
+
+                </div>
+
+            </form>
         </div>
 
         <div>
@@ -196,6 +283,7 @@ $done_tasks = $tasks["done"];
         <div class="main">
             <div class="column">
                 <h2>Todo</h2>
+
                 <form action="actions.php" method="post">
                     <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
                     <input type="text" name="task_name" placeholder="Task name" required>
@@ -207,45 +295,68 @@ $done_tasks = $tasks["done"];
                 <div class="rows">
                     <?php foreach ($todo_tasks as $task): ?>
                         <div class="task-card">
-                            <p>
-                                Task name :
-                                <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
-                            </p>
-                            <p>
-                                Deadline :
-                                <?php echo htmlspecialchars($task["DEADLINE"]); ?>
-                            </p>
-                            <p>
-                                Created at :
-                                <?php echo htmlspecialchars($task["CREATED_AT"]); ?>
-                            </p>
+                            <form action="actions.php" method="post">
+                                <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+                                <input type="hidden" name="task_id" value="<?php echo $task["KANBAN_TASK_ID"]; ?>">
+
+                                <p>
+                                    Task name :
+                                    <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
+                                </p>
+
+                                <input
+                                    type="text"
+                                    name="new_task_name"
+                                    value="<?php echo htmlspecialchars($task["TASK_NAME"]); ?>"
+                                    required>
+
+                                <p>
+                                    Deadline :
+                                    <?php echo htmlspecialchars($task["DEADLINE"]); ?>
+                                </p>
+
+                                <p>
+                                    Created at :
+                                    <?php echo htmlspecialchars($task["CREATED_AT"]); ?>
+                                </p>
+
+                                <button type="submit" name="action" value="update_task">
+                                    Update
+                                </button>
+                            </form>
                         </div>
                     <?php endforeach; ?>
                 </div>
-
             </div>
 
             <div class="column">
-                <div class="column">
-                    <h2>In Progress</h2>
+                <h2>In Progress</h2>
 
-                    <form action="actions.php" method="post">
-                        <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+                <form action="actions.php" method="post">
+                    <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+                    <input type="text" name="task_name" placeholder="Task name" required>
+                    <button name="action" value="add_progress">
+                        Add Row
+                    </button>
+                </form>
 
-                        <input type="text" name="task_name" placeholder="Task name" required>
+                <div class="rows">
+                    <?php foreach ($ongoing_tasks as $task): ?>
+                        <div class="task-card">
+                            <form action="actions.php" method="post">
+                                <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+                                <input type="hidden" name="task_id" value="<?php echo $task["KANBAN_TASK_ID"]; ?>">
 
-                        <button name="action" value="add_progress">
-                            Add Row
-                        </button>
-                    </form>
-
-                    <div class="rows">
-                        <?php foreach ($ongoing_tasks as $task): ?>
-                            <div class="task-card">
                                 <p>
                                     Task name :
                                     <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
                                 </p>
+
+                                <input
+                                    type="text"
+                                    name="new_task_name"
+                                    value="<?php echo htmlspecialchars($task["TASK_NAME"]); ?>"
+                                    required>
 
                                 <p>
                                     Deadline :
@@ -256,33 +367,44 @@ $done_tasks = $tasks["done"];
                                     Created at :
                                     <?php echo htmlspecialchars($task["CREATED_AT"]); ?>
                                 </p>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
+
+                                <button type="submit" name="action" value="update_task">
+                                    Update
+                                </button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
 
             <div class="column">
-                <div class="column">
-                    <h2>Done</h2>
+                <h2>Done</h2>
 
-                    <form action="actions.php" method="post">
-                        <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+                <form action="actions.php" method="post">
+                    <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+                    <input type="text" name="task_name" placeholder="Task name" required>
+                    <button name="action" value="add_done">
+                        Add Row
+                    </button>
+                </form>
 
-                        <input type="text" name="task_name" placeholder="Task name" required>
+                <div class="rows">
+                    <?php foreach ($done_tasks as $task): ?>
+                        <div class="task-card">
+                            <form action="actions.php" method="post">
+                                <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+                                <input type="hidden" name="task_id" value="<?php echo $task["KANBAN_TASK_ID"]; ?>">
 
-                        <button name="action" value="add_done">
-                            Add Row
-                        </button>
-                    </form>
-
-                    <div class="rows">
-                        <?php foreach ($done_tasks as $task): ?>
-                            <div class="task-card">
                                 <p>
                                     Task name :
                                     <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
                                 </p>
+
+                                <input
+                                    type="text"
+                                    name="new_task_name"
+                                    value="<?php echo htmlspecialchars($task["TASK_NAME"]); ?>"
+                                    required>
 
                                 <p>
                                     Deadline :
@@ -293,9 +415,13 @@ $done_tasks = $tasks["done"];
                                     Created at :
                                     <?php echo htmlspecialchars($task["CREATED_AT"]); ?>
                                 </p>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
+
+                                <button type="submit" name="action" value="update_task">
+                                    Update
+                                </button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>

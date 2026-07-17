@@ -1,0 +1,8 @@
+CREATE OR REPLACE TRIGGER trg_task_update
+BEFORE UPDATE
+ON kanban_tasks
+FOR EACH ROW
+BEGIN
+    :NEW.updated_at := CURRENT_TIMESTAMP;
+END;
+/
