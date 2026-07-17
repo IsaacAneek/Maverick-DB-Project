@@ -171,19 +171,12 @@ $done_tasks = $tasks["done"];
                 <div class="siderbar-header">
                     <div class="siderbar-header-buttons">
                         <button type="button">Spaces</button>
-                        <button
-                            type="submit"
-                            name="action"
-                            value="add_space">
+                        <button type="submit" name="action" value="add_space">
                             Add New Space
                         </button>
                     </div>
                     <div class="siderbar-header-input">
-                        <input
-                            type="text"
-                            name="space_name"
-                            placeholder="New Space Name"
-                            required>
+                        <input type="text" name="space_name" placeholder="New Space Name" required>
                     </div>
                 </div>
             </form>
@@ -191,10 +184,7 @@ $done_tasks = $tasks["done"];
             <div class="space">
                 <?php foreach ($spaces as $space): ?>
                     <form action="index.php" method="get">
-                        <input
-                            type="hidden"
-                            name="space_id"
-                            value="<?php echo $space["SPACE_ID"]; ?>">
+                        <input type="hidden" name="space_id" value="<?php echo $space["SPACE_ID"]; ?>">
                         <button type="submit">
                             <?php echo htmlspecialchars($space["SPACE_NAME"]); ?>
                         </button>
@@ -207,18 +197,9 @@ $done_tasks = $tasks["done"];
             <div class="column">
                 <h2>Todo</h2>
                 <form action="actions.php" method="post">
-                    <input
-                        type="hidden"
-                        name="space_id"
-                        value="<?php echo $selected_space_id; ?>">
-                    <input
-                        type="text"
-                        name="task_name"
-                        placeholder="Task name"
-                        required>
-                    <button
-                        name="action"
-                        value="add_todo">
+                    <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+                    <input type="text" name="task_name" placeholder="Task name" required>
+                    <button name="action" value="add_todo">
                         Add Row
                     </button>
                 </form>
@@ -227,7 +208,7 @@ $done_tasks = $tasks["done"];
                     <?php foreach ($todo_tasks as $task): ?>
                         <div class="task-card">
                             <p>
-                                Task name : 
+                                Task name :
                                 <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
                             </p>
                             <p>
@@ -245,27 +226,80 @@ $done_tasks = $tasks["done"];
             </div>
 
             <div class="column">
-                <h2>In Progress</h2>
-                <div class="rows">
-                    <?php foreach ($ongoing_tasks as $task): ?>
-                        <div class="task-card">
-                            <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
-                        </div>
-                    <?php endforeach; ?>
+                <div class="column">
+                    <h2>In Progress</h2>
+
+                    <form action="actions.php" method="post">
+                        <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+
+                        <input type="text" name="task_name" placeholder="Task name" required>
+
+                        <button name="action" value="add_progress">
+                            Add Row
+                        </button>
+                    </form>
+
+                    <div class="rows">
+                        <?php foreach ($ongoing_tasks as $task): ?>
+                            <div class="task-card">
+                                <p>
+                                    Task name :
+                                    <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
+                                </p>
+
+                                <p>
+                                    Deadline :
+                                    <?php echo htmlspecialchars($task["DEADLINE"]); ?>
+                                </p>
+
+                                <p>
+                                    Created at :
+                                    <?php echo htmlspecialchars($task["CREATED_AT"]); ?>
+                                </p>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
 
             <div class="column">
-                <h2>Done</h2>
-                <div class="rows">
-                    <?php foreach ($done_tasks as $task): ?>
-                        <div class="task-card">
-                            <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
-                        </div>
-                    <?php endforeach; ?>
+                <div class="column">
+                    <h2>Done</h2>
+
+                    <form action="actions.php" method="post">
+                        <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
+
+                        <input type="text" name="task_name" placeholder="Task name" required>
+
+                        <button name="action" value="add_done">
+                            Add Row
+                        </button>
+                    </form>
+
+                    <div class="rows">
+                        <?php foreach ($done_tasks as $task): ?>
+                            <div class="task-card">
+                                <p>
+                                    Task name :
+                                    <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
+                                </p>
+
+                                <p>
+                                    Deadline :
+                                    <?php echo htmlspecialchars($task["DEADLINE"]); ?>
+                                </p>
+
+                                <p>
+                                    Created at :
+                                    <?php echo htmlspecialchars($task["CREATED_AT"]); ?>
+                                </p>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>

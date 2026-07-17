@@ -57,6 +57,124 @@ function add_space($conn)
     exit();
 }
 
+function add_progress($conn)
+{
+    $space_id = $_POST["space_id"];
+    $task_name = trim($_POST["task_name"]);
+
+    if ($task_name == "")
+        return;
+
+    $sql = "SELECT kanban_board_id
+            FROM kanban_boards
+            WHERE space_id = :space_id";
+
+    $stmt = oci_parse($conn, $sql);
+
+    oci_bind_by_name($stmt, ":space_id", $space_id);
+
+    oci_execute($stmt);
+
+    $row = oci_fetch_assoc($stmt);
+
+    oci_free_statement($stmt);
+
+    if (!$row)
+        die("Board not found");
+
+    $board_id = $row["KANBAN_BOARD_ID"];
+    $task_id = time();
+
+    $sql = "INSERT INTO kanban_tasks
+            (
+                kanban_task_id,
+                kanban_board_id,
+                task_name,
+                column_name,
+                position
+            )
+            VALUES
+            (
+                :task_id,
+                :board_id,
+                :task_name,
+                'ongoing',
+                0
+            )";
+
+    $stmt = oci_parse($conn, $sql);
+
+    oci_bind_by_name($stmt, ":task_id", $task_id);
+    oci_bind_by_name($stmt, ":board_id", $board_id);
+    oci_bind_by_name($stmt, ":task_name", $task_name);
+
+    oci_execute($stmt, OCI_COMMIT_ON_SUCCESS);
+
+    oci_free_statement($stmt);
+
+    header("Location:index.php?space_id=".$space_id);
+    exit();
+}
+
+function add_done($conn)
+{
+    $space_id = $_POST["space_id"];
+    $task_name = trim($_POST["task_name"]);
+
+    if ($task_name == "")
+        return;
+
+    $sql = "SELECT kanban_board_id
+            FROM kanban_boards
+            WHERE space_id = :space_id";
+
+    $stmt = oci_parse($conn, $sql);
+
+    oci_bind_by_name($stmt, ":space_id", $space_id);
+
+    oci_execute($stmt);
+
+    $row = oci_fetch_assoc($stmt);
+
+    oci_free_statement($stmt);
+
+    if (!$row)
+        die("Board not found");
+
+    $board_id = $row["KANBAN_BOARD_ID"];
+    $task_id = time();
+
+    $sql = "INSERT INTO kanban_tasks
+            (
+                kanban_task_id,
+                kanban_board_id,
+                task_name,
+                column_name,
+                position
+            )
+            VALUES
+            (
+                :task_id,
+                :board_id,
+                :task_name,
+                'done',
+                0
+            )";
+
+    $stmt = oci_parse($conn, $sql);
+
+    oci_bind_by_name($stmt, ":task_id", $task_id);
+    oci_bind_by_name($stmt, ":board_id", $board_id);
+    oci_bind_by_name($stmt, ":task_name", $task_name);
+
+    oci_execute($stmt, OCI_COMMIT_ON_SUCCESS);
+
+    oci_free_statement($stmt);
+
+    header("Location:index.php?space_id=".$space_id);
+    exit();
+}
+
 function add_todo($conn)
 {
     $space_id=$_POST["space_id"];
@@ -246,6 +364,14 @@ if (isset($_POST["action"])) {
 
         case "add_todo":
             add_todo($conn);
+            break;
+
+        case "add_progress":
+            add_progress($conn);
+            break;
+
+        case "add_done":
+            add_done($conn);
             break;
     }
 
