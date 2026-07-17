@@ -9,34 +9,56 @@ if (!isset($_SESSION["logged_in"])) {
 
 $user_id = $_SESSION["user_id"];
 
-$sql = "
-SELECT kt.* FROM kanban_tasks kt
-JOIN kanban_boards kb
-    ON kt.kanban_board_id = kb.kanban_board_id
-JOIN spaces s
-    ON kb.space_id = s.space_id
-WHERE s.user_id = :user_id
-ORDER BY kt.position ASC
-";
+function load_spaces($conn, $user_id)
+{
+    $spaces = [];
 
-$statement = oci_parse($conn, $sql);
-oci_bind_by_name($statement, ":user_id", $user_id);
-oci_execute($statement);
+    $sql = "SELECT *
+            FROM spaces
+            WHERE user_id = :user_id
+            ORDER BY space_name";
 
-$todo_tasks = [];
-$ongoing_tasks = [];
-$done_tasks = [];
-$spaces = [];
+    $stmt = oci_parse($conn, $sql);
 
-$selected_space_id = null;
+    oci_bind_by_name($stmt, ":user_id", $user_id);
 
-if (isset($_GET["space_id"])) {
-    $selected_space_id = $_GET["space_id"];
-} elseif (count($spaces) > 0) {
-    $selected_space_id = $spaces[0]["SPACE_ID"];
+    oci_execute($stmt);
+
+    while ($row = oci_fetch_assoc($stmt)) {
+        $spaces[] = $row;
+    }
+
+    oci_free_statement($stmt);
+
+    return $spaces;
 }
 
-if ($selected_space_id != null) {
+function get_selected_space($spaces)
+{
+    if (isset($_GET["space_id"])) {
+        return $_GET["space_id"];
+    }
+
+    if (!empty($spaces)) {
+        return $spaces[0]["SPACE_ID"];
+    }
+
+    return null;
+}
+
+function load_kanban_tasks($conn, $space_id)
+{
+    $todo_tasks = [];
+    $ongoing_tasks = [];
+    $done_tasks = [];
+
+    if ($space_id == null) {
+        return [
+            "todo" => $todo_tasks,
+            "ongoing" => $ongoing_tasks,
+            "done" => $done_tasks
+        ];
+    }
 
     $sql = "
     SELECT kt.*
@@ -48,7 +70,7 @@ if ($selected_space_id != null) {
 
     $stmt = oci_parse($conn, $sql);
 
-    oci_bind_by_name($stmt, ":space_id", $selected_space_id);
+    oci_bind_by_name($stmt, ":space_id", $space_id);
 
     oci_execute($stmt);
 
@@ -71,9 +93,23 @@ if ($selected_space_id != null) {
     }
 
     oci_free_statement($stmt);
-}
-?>
 
+    return [
+        "todo" => $todo_tasks,
+        "ongoing" => $ongoing_tasks,
+        "done" => $done_tasks
+    ];
+}
+
+$spaces = load_spaces($conn, $user_id);
+
+$selected_space_id = get_selected_space($spaces);
+
+$tasks = load_kanban_tasks($conn, $selected_space_id);
+
+$todo_tasks = $tasks["todo"];
+$ongoing_tasks = $tasks["ongoing"];
+$done_tasks = $tasks["done"];
 ?>
 
 <!DOCTYPE html>
@@ -130,85 +166,95 @@ if ($selected_space_id != null) {
     </div>
 
     <div class="content">
-
         <div class="sidebar">
             <form action="actions.php" method="post">
-                <div>
-                    <div class="siderbar-header">
-                        <div class="siderbar-header-buttons">
-                            <button name="action">Spaces</button>
-                            <button name="action" value="add_space">Add New Space</button>
-                        </div>
-                        <div class="siderbar-header-input">
-                            <input type="text" name="space_name" placeholder="New Space Name" required>
-                        </div>
+                <div class="siderbar-header">
+                    <div class="siderbar-header-buttons">
+                        <button type="button">Spaces</button>
+                        <button
+                            type="submit"
+                            name="action"
+                            value="add_space">
+                            Add New Space
+                        </button>
                     </div>
-
-                    <div class="space">
-                        <?php foreach ($spaces as $space): ?>
-                            <form method="get">
-                                <input type="hidden" name="space_id" value="<?php echo $space["SPACE_ID"]; ?>">
-                                <button type="submit">
-                                    <?php echo htmlspecialchars($space["SPACE_NAME"]); ?>
-                                </button>
-                            </form>
-                        <?php endforeach; ?>
+                    <div class="siderbar-header-input">
+                        <input
+                            type="text"
+                            name="space_name"
+                            placeholder="New Space Name"
+                            required>
                     </div>
                 </div>
             </form>
+
+            <div class="space">
+                <?php foreach ($spaces as $space): ?>
+                    <form action="index.php" method="get">
+                        <input
+                            type="hidden"
+                            name="space_id"
+                            value="<?php echo $space["SPACE_ID"]; ?>">
+                        <button type="submit">
+                            <?php echo htmlspecialchars($space["SPACE_NAME"]); ?>
+                        </button>
+                    </form>
+                <?php endforeach; ?>
+            </div>
         </div>
 
         <div class="main">
-
             <div class="column">
                 <h2>Todo</h2>
-
                 <form action="actions.php" method="post">
-                    <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
-                    <input type="text" name="task_name" placeholder="Task name" required>
-                    <button name="action" value="add_todo">
+                    <input
+                        type="hidden"
+                        name="space_id"
+                        value="<?php echo $selected_space_id; ?>">
+                    <input
+                        type="text"
+                        name="task_name"
+                        placeholder="Task name"
+                        required>
+                    <button
+                        name="action"
+                        value="add_todo">
                         Add Row
                     </button>
-
                 </form>
 
                 <div class="rows">
                     <?php foreach ($todo_tasks as $task): ?>
                         <div class="task-card">
-                            <?php echo htmlspecialchars($task['TASK_NAME']); ?>
+                            <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+            </div>
+
+            <div class="column">
+                <h2>In Progress</h2>
+                <div class="rows">
+                    <?php foreach ($ongoing_tasks as $task): ?>
+                        <div class="task-card">
+                            <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </div>
 
             <div class="column">
-                <h2>In Progress</h2>
-
-                <form action="actions.php" method="post">
-                    <button name="action" value="add_progress">
-                        Add Row
-                    </button>
-                </form>
-
-                <div class="rows"></div>
-            </div>
-
-            <div class="column">
                 <h2>Done</h2>
-
-                <form action="actions.php" method="post">
-                    <button name="action" value="add_done">
-                        Add Row
-                    </button>
-                </form>
-
-                <div class="rows"></div>
+                <div class="rows">
+                    <?php foreach ($done_tasks as $task): ?>
+                        <div class="task-card">
+                            <?php echo htmlspecialchars($task["TASK_NAME"]); ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
-
         </div>
-
     </div>
-
 </body>
-
 </html>
