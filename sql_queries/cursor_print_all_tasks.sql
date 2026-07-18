@@ -17,17 +17,17 @@ BEGIN
 
     FOR rec IN (
         SELECT kt.kanban_task_id,
-               u.username,
-               kt.task_name,
-               kt.column_name,
-               kt.created_at
+        u.username,
+        kt.task_name,
+        kt.column_name,
+        kt.created_at
         FROM kanban_tasks kt
         JOIN kanban_boards kb
-            ON kt.kanban_board_id = kb.kanban_board_id
+        ON kt.kanban_board_id = kb.kanban_board_id
         JOIN spaces s
-            ON kb.space_id = s.space_id
+        ON kb.space_id = s.space_id
         JOIN users u
-            ON s.user_id = u.user_id
+        ON s.user_id = u.user_id
     )
     LOOP
         tasks_array.EXTEND;
@@ -43,11 +43,8 @@ BEGIN
 
     FOR i IN 1 .. tasks_array.COUNT LOOP
         DBMS_OUTPUT.PUT_LINE(
-            'User: ' || tasks_array(i).user_name ||
-            ' | Task: ' || tasks_array(i).task_name ||
-            ' | Column: ' || tasks_array(i).column_name ||
-            ' | Created: ' ||
-            TO_CHAR(tasks_array(i).created_at, 'YYYY-MM-DD HH24:MI:SS')
+            'User: ' || tasks_array(i).user_name || ' | Task: ' || tasks_array(i).task_name ||
+            ' | Column: ' || tasks_array(i).column_name || ' | Created: ' || TO_CHAR(tasks_array(i).created_at, 'DD-MM-YYYY HH24:MI:SS')
         );
     END LOOP;
 END;

@@ -247,7 +247,8 @@ $done_tasks = $tasks["done"];
                 <button name="action" value="notifications">Notifications</button>
                 <button name="action" value="help">Help</button>
                 <button name="action" value="settings">Settings</button>
-                <button name="action" value="profile">Profile</button>
+                <button name="action" value="profile">Username : <?php echo htmlspecialchars($_SESSION['username']);?></button>
+                <button name="action" value="logout">Logout</button>
             </form>
         </div>
     </div>
