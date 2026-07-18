@@ -384,6 +384,19 @@ function update_task($conn)
     exit();
 }
 
+function logout()
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    $_SESSION = [];
+    session_destroy();
+
+    header("Location: login.php");
+    exit();
+}
+
 if (isset($_POST["action"])) {
 
     switch ($_POST["action"]) {
@@ -413,6 +426,9 @@ if (isset($_POST["action"])) {
 
         case "update_task":
             update_task($conn);
+            break;
+        case "logout":
+            logout();
             break;
     }
 
