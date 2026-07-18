@@ -292,7 +292,8 @@ function register($conn)
     $password = $_POST["password"];
 
     if (empty($user_id) || empty($username) || empty($password)) {
-        die("All fields are required.");
+        echo "<script>alert('All fields are required');window.location.href = 'registration.php';</script>";
+        exit();
     }
 
     $check_sql = "SELECT user_id
@@ -397,10 +398,20 @@ function logout()
     exit();
 }
 
+function redirect_to_reg_page() 
+{
+    header("Location: registration.php");
+    exit();
+}
+
 if (isset($_POST["action"])) {
 
     switch ($_POST["action"]) {
         case "register":
+            redirect_to_reg_page();
+            break;
+
+        case "create_account":
             register($conn);
             break;
 

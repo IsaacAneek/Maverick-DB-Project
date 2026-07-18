@@ -32,7 +32,7 @@
                 id="password"
                 name="password">
 
-            <button type="submit" name="action" value="register">
+            <button type="submit" name="action" value="create_account">
                 Create Account
             </button>
 
