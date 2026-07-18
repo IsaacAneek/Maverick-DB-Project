@@ -81,13 +81,41 @@ function load_kanban_tasks($conn, $space_id)
     SELECT kt.*
     FROM kanban_tasks kt
     JOIN kanban_boards kb
-        ON kt.kanban_board_id = kb.kanban_board_id
-    WHERE kb.space_id = :space_id
-    ORDER BY $order_by";
+    ON kt.kanban_board_id = kb.kanban_board_id
+    WHERE kb.space_id = :space_id";
+
+    if (!empty($_GET["search"])) {
+    $sql .= " AND LOWER(kt.task_name) LIKE :search";
+    }
+
+    if (!empty($_GET["from_time"])) {
+    $sql .= " AND kt.created_at >= TO_TIMESTAMP(:from_time, 'YYYY-MM-DD\"T\"HH24:MI')";
+    }
+
+    if (!empty($_GET["to_time"])) {
+    $sql .= " AND kt.created_at <= TO_TIMESTAMP(:to_time, 'YYYY-MM-DD\"T\"HH24:MI')";
+    }
+
+    $sql .= " ORDER BY $order_by";
 
     $stmt = oci_parse($conn, $sql);
 
     oci_bind_by_name($stmt, ":space_id", $space_id);
+
+    if (!empty($_GET["search"])) {
+        $search = "%" . strtolower($_GET["search"]) . "%";
+        oci_bind_by_name($stmt, ":search", $search);
+    }
+
+    if (!empty($_GET["from_time"])) {
+        $from = $_GET["from_time"];
+        oci_bind_by_name($stmt, ":from_time", $from);
+    }
+
+    if (!empty($_GET["to_time"])) {
+        $to = $_GET["to_time"];
+        oci_bind_by_name($stmt, ":to_time", $to);
+    }
 
     oci_execute($stmt);
 
