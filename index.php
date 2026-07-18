@@ -147,24 +147,14 @@ $done_tasks = $tasks["done"];
             <form action="index.php" method="get">
 
                 <?php if ($selected_space_id != null): ?>
-                    <input
-                        type="hidden"
-                        name="space_id"
-                        value="<?php echo $selected_space_id; ?>">
+                    <input type="hidden" name="space_id" value="<?php echo $selected_space_id; ?>">
                 <?php endif; ?>
 
                 <div class="search-group">
 
-                    <input
-                        type="text"
-                        class="search-input"
-                        name="search"
-                        placeholder="Search tasks">
+                    <input type="text" class="search-input" name="search" placeholder="Search tasks">
 
-                    <button
-                        type="submit"
-                        name="action"
-                        value="search">
+                    <button type="submit" name="action" value="search">
                         Apply Search
                     </button>
 
@@ -173,72 +163,39 @@ $done_tasks = $tasks["done"];
 
                         <div class="dropdown-panel">
 
-                            <label for="time-range">Time Range</label>
-                            <input
-                                type="datetime-local"
-                                id="time-range"
-                                name="time_range">
+                            <label>From</label>
+                            <input type="datetime-local" name="from_time" value="<?php echo $_GET["from_time"] ?? ""; ?>">
 
-                            <label for="task-name">Task Name</label>
-                            <input
-                                type="text"
-                                id="task-name"
-                                name="task_name"
-                                placeholder="Task Name">
+                            <label>To</label>
+                            <input type="datetime-local" name="to_time" value="<?php echo $_GET["to_time"] ?? ""; ?>">
 
-                            <label for="task-type">Task Type</label>
-                            <select
-                                id="task-type"
-                                name="task_type">
-
-                                <option value="">All</option>
-                                <option value="todo">Todo</option>
-                                <option value="ongoing">In Progress</option>
-                                <option value="done">Done</option>
-
-                            </select>
-
-                            <button
-                                type="submit"
-                                name="action"
-                                value="filter">
+                            <button type="submit" name="action" value="filter">
                                 Apply Filter
                             </button>
 
                         </div>
                     </details>
 
-                        <details class="dropdown">
-                            <summary class="nav-action">Sort</summary>
+                    <details class="dropdown">
+                        <summary class="nav-action">Sort</summary>
 
-                            <div class="dropdown-panel">
+                        <div class="dropdown-panel">
 
-                                <label class="checkbox-row">
-                                    <input
-                                        type="radio"
-                                        name="sort"
-                                        value="created_at"
-                                        checked>
-                                    Time
-                                </label>
+                            <label class="checkbox-row">
+                                <input type="radio" name="sort" value="created_at" checked>Time
+                            </label>
 
-                                <label class="checkbox-row">
-                                    <input
-                                        type="radio"
-                                        name="sort"
-                                        value="task_name">
-                                    Name
-                                </label>
+                            <label class="checkbox-row">
+                                <input type="radio" name="sort" value="task_name">Name
+                            </label>
 
-                                <button type="submit">
-                                    Apply Sort
-                                </button>
+                            <button type="submit">
+                                Apply Sort
+                            </button>
 
-                            </div>
-                        </details>
-
+                        </div>
+                    </details>
                 </div>
-
             </form>
         </div>
 
