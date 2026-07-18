@@ -349,6 +349,41 @@ function register($conn)
     exit();
 }
 
+function update_task($conn)
+{
+    if (!isset($_SESSION["logged_in"])) {
+        header("Location: login.php");
+        exit();
+    }
+
+    $task_id = $_POST["task_id"];
+    $space_id = $_POST["space_id"];
+    $task_name = trim($_POST["new_task_name"]);
+
+    if ($task_name == "") {
+        header("Location: index.php?space_id=" . $space_id);
+        exit();
+    }
+
+    $sql = "UPDATE kanban_tasks
+            SET task_name = :task_name
+            WHERE kanban_task_id = :task_id";
+
+    $stmt = oci_parse($conn, $sql);
+
+    oci_bind_by_name($stmt, ":task_name", $task_name);
+    oci_bind_by_name($stmt, ":task_id", $task_id);
+
+    if (!oci_execute($stmt, OCI_COMMIT_ON_SUCCESS)) {
+        db_error($stmt);
+    }
+
+    oci_free_statement($stmt);
+
+    header("Location: index.php?space_id=" . $space_id);
+    exit();
+}
+
 if (isset($_POST["action"])) {
 
     switch ($_POST["action"]) {
@@ -374,6 +409,10 @@ if (isset($_POST["action"])) {
 
         case "add_done":
             add_done($conn);
+            break;
+
+        case "update_task":
+            update_task($conn);
             break;
     }
 
