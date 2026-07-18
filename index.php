@@ -320,6 +320,11 @@ $done_tasks = $tasks["done"];
                                     <?php echo htmlspecialchars($task["CREATED_AT"]); ?>
                                 </p>
 
+                                <p>
+                                    Updated at :
+                                    <?php echo htmlspecialchars($task["UPDATED_AT"]); ?>
+                                </p>
+
                                 <button type="submit" name="action" value="update_task">
                                     Update
                                 </button>
@@ -368,6 +373,11 @@ $done_tasks = $tasks["done"];
                                     <?php echo htmlspecialchars($task["CREATED_AT"]); ?>
                                 </p>
 
+                                <p>
+                                    Updated at :
+                                    <?php echo htmlspecialchars($task["UPDATED_AT"]); ?>
+                                </p>
+
                                 <button type="submit" name="action" value="update_task">
                                     Update
                                 </button>
@@ -414,6 +424,11 @@ $done_tasks = $tasks["done"];
                                 <p>
                                     Created at :
                                     <?php echo htmlspecialchars($task["CREATED_AT"]); ?>
+                                </p>
+
+                                <p>
+                                    Updated at :
+                                    <?php echo htmlspecialchars($task["UPDATED_AT"]); ?>
                                 </p>
 
                                 <button type="submit" name="action" value="update_task">
